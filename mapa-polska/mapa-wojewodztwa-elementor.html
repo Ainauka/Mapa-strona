@@ -1,0 +1,385 @@
+<!--
+====================================================================
+NETVET.PL — Interaktywna mapa Polski (terminale platnicze / kasy fiskalne)
+Wkleic w widget "HTML" Elementora (mozna go umiescic w kontenerze na
+samym dole strony, przed stopka).
+
+MAPOWANIE STRON (edytuj docelowe adresy URL w atrybutach href="..."
+ponizej, w trzech miejscach: SVG <a> dla obszaru wojewodztwa, SVG <a>
+dla kropki-stolicy oraz w "kafelku" na liscie miast):
+  Strona A  ->  strona-a.html   (Wrocław, woj. Dolnośląskie)
+  Strona B  ->  strona-b.html   (Bydgoszcz, woj. Kujawsko-Pomorskie)
+  Strona C  ->  strona-c.html   (Łódź, woj. Łódzkie)
+  Strona D  ->  strona-d.html   (Lublin, woj. Lubelskie)
+  Strona E  ->  strona-e.html   (Zielona Góra, woj. Lubuskie)
+  Strona F  ->  strona-f.html   (Kraków, woj. Małopolskie)
+  Strona G  ->  strona-g.html   (Warszawa, woj. Mazowieckie)
+  Strona H  ->  strona-h.html   (Opole, woj. Opolskie)
+  Strona I  ->  strona-i.html   (Rzeszów, woj. Podkarpackie)
+  Strona J  ->  strona-j.html   (Białystok, woj. Podlaskie)
+  Strona K  ->  strona-k.html   (Gdańsk, woj. Pomorskie)
+  Strona L  ->  strona-l.html   (Katowice, woj. Śląskie)
+  Strona M  ->  strona-m.html   (Kielce, woj. Świętokrzyskie)
+  Strona N  ->  strona-n.html   (Olsztyn, woj. Warmińsko-Mazurskie)
+  Strona O  ->  strona-o.html   (Poznań, woj. Wielkopolskie)
+  Strona P  ->  strona-p.html   (Szczecin, woj. Zachodniopomorskie)
+====================================================================
+-->
+<section class="nv-map-section" id="nv-mapa-polska">
+  <style>
+    #nv-mapa-polska{
+      --nv-navy:#0e1338;
+      --nv-navy-2:#161c4a;
+      --nv-navy-3:#1d245c;
+      --nv-blue:#3b5bfe;
+      --nv-blue-light:#7c93ff;
+      --nv-ink:#161a3a;
+      --nv-gray:#6b7280;
+      --nv-line:#e7e9f5;
+      box-sizing:border-box;
+      background:#ffffff;
+      padding:88px 24px;
+      font-family:inherit;
+      overflow:hidden;
+    }
+    #nv-mapa-polska *{ box-sizing:border-box; }
+    #nv-mapa-polska .nv-wrap{ max-width:1200px; margin:0 auto; }
+    #nv-mapa-polska .nv-head{ text-align:center; max-width:680px; margin:0 auto 48px; }
+    #nv-mapa-polska .nv-eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--nv-blue); margin:0 0 14px;
+    }
+    #nv-mapa-polska .nv-eyebrow::before{
+      content:""; width:8px; height:8px; border-radius:50%; background:var(--nv-blue);
+      box-shadow:0 0 0 4px rgba(59,91,254,.15);
+    }
+    #nv-mapa-polska h2{
+      font-size:clamp(28px,3.4vw,40px); line-height:1.2; font-weight:800;
+      color:var(--nv-ink); margin:0 0 16px;
+    }
+    #nv-mapa-polska h2 span{ color:var(--nv-blue); }
+    #nv-mapa-polska .nv-head p{
+      font-size:16px; line-height:1.65; color:var(--nv-gray); margin:0;
+    }
+
+    #nv-mapa-polska .nv-panel{
+      position:relative;
+      display:grid;
+      grid-template-columns:1.15fr 1fr;
+      gap:0;
+      background:linear-gradient(160deg,var(--nv-navy) 0%,var(--nv-navy-2) 55%,var(--nv-navy-3) 100%);
+      border-radius:28px;
+      overflow:hidden;
+      box-shadow:0 30px 70px -25px rgba(14,19,56,.55), 0 0 0 1px rgba(255,255,255,.04) inset;
+    }
+    #nv-mapa-polska .nv-panel::before{
+      content:""; position:absolute; inset:0;
+      background-image:radial-gradient(rgba(255,255,255,.14) 1px, transparent 1px);
+      background-size:22px 22px;
+      opacity:.35;
+      mask-image:radial-gradient(circle at 30% 30%, rgba(0,0,0,.9), transparent 70%);
+      pointer-events:none;
+    }
+    #nv-mapa-polska .nv-glow{
+      position:absolute; width:520px; height:520px; border-radius:50%;
+      background:radial-gradient(circle, rgba(59,91,254,.35), transparent 70%);
+      top:-140px; right:-160px; pointer-events:none; filter:blur(10px);
+    }
+
+    #nv-mapa-polska .nv-map-side{
+      position:relative; padding:44px 24px 40px; display:flex; align-items:center; justify-content:center;
+      min-width:0;
+    }
+    #nv-mapa-polska .nv-map-svg{ width:100%; height:auto; max-width:560px; display:block; overflow:visible; }
+
+    #nv-mapa-polska .nv-region{
+      fill:rgba(255,255,255,.07);
+      stroke:rgba(255,255,255,.22);
+      stroke-width:1.2;
+      transition:fill .25s ease, stroke .25s ease, filter .25s ease;
+      cursor:pointer;
+    }
+    #nv-mapa-polska .nv-region-link{ outline:none; }
+    #nv-mapa-polska .nv-region-link:hover .nv-region,
+    #nv-mapa-polska .nv-region-link:focus-visible .nv-region,
+    #nv-mapa-polska .nv-region-link.is-active .nv-region{
+      fill:var(--nv-blue);
+      stroke:rgba(255,255,255,.55);
+      filter:drop-shadow(0 6px 18px rgba(59,91,254,.55));
+    }
+    #nv-mapa-polska .nv-region-link:focus-visible .nv-region{
+      stroke:#ffffff; stroke-width:1.8;
+    }
+
+    #nv-mapa-polska .nv-dot-link{ cursor:pointer; }
+    #nv-mapa-polska .nv-dot-core{ fill:#ffffff; transition:r .2s ease; }
+    #nv-mapa-polska .nv-dot-ring{
+      fill:none; stroke:#ffffff; stroke-width:1.3; opacity:.85;
+    }
+    #nv-mapa-polska .nv-dot-pulse{
+      fill:var(--nv-blue-light); opacity:.55;
+      transform-origin:center;
+      transform-box:fill-box;
+      animation:nvPulse 2.6s ease-out infinite;
+    }
+    #nv-mapa-polska .nv-dot-link.is-active .nv-dot-core{ r:4.2; }
+    #nv-mapa-polska .nv-dot-link:hover .nv-dot-core{ r:4.2; }
+
+    @keyframes nvPulse{
+      0%{ transform:scale(.5); opacity:.65; }
+      70%{ transform:scale(2.4); opacity:0; }
+      100%{ transform:scale(2.4); opacity:0; }
+    }
+    @media (prefers-reduced-motion:reduce){
+      #nv-mapa-polska .nv-dot-pulse{ animation:none; opacity:.25; }
+    }
+
+    #nv-mapa-polska .nv-tooltip{
+      position:absolute; z-index:5; pointer-events:none;
+      min-width:180px; padding:12px 16px; border-radius:14px;
+      background:#ffffff; color:var(--nv-ink);
+      box-shadow:0 18px 40px -12px rgba(10,14,40,.45);
+      transform:translate(-50%,calc(-100% - 14px));
+      opacity:0; transition:opacity .15s ease, transform .15s ease;
+      font-size:14px;
+    }
+    #nv-mapa-polska .nv-tooltip.is-visible{ opacity:1; }
+    #nv-mapa-polska .nv-tooltip strong{ display:block; font-size:15px; color:var(--nv-ink); }
+    #nv-mapa-polska .nv-tooltip small{ display:block; color:var(--nv-gray); font-size:12px; margin-top:1px; }
+    #nv-mapa-polska .nv-tooltip em{
+      display:inline-flex; align-items:center; gap:4px; margin-top:8px;
+      font-style:normal; font-weight:700; font-size:12.5px; color:var(--nv-blue);
+    }
+    #nv-mapa-polska .nv-tooltip::after{
+      content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%);
+      border:7px solid transparent; border-top-color:#ffffff;
+    }
+
+    #nv-mapa-polska .nv-badge{
+      position:absolute; left:32px; bottom:28px; z-index:4;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      backdrop-filter:blur(6px);
+      border-radius:16px; padding:14px 18px;
+      display:flex; align-items:center; gap:12px;
+    }
+    #nv-mapa-polska .nv-badge b{
+      font-size:26px; font-weight:800; color:#ffffff; line-height:1;
+    }
+    #nv-mapa-polska .nv-badge span{
+      display:block; font-size:11.5px; font-weight:700; letter-spacing:.05em;
+      text-transform:uppercase; color:var(--nv-blue-light); max-width:110px; line-height:1.3;
+    }
+
+    #nv-mapa-polska .nv-list-side{
+      position:relative; background:rgba(255,255,255,.03);
+      border-left:1px solid rgba(255,255,255,.08);
+      padding:40px 28px; display:flex; flex-direction:column;
+    }
+    #nv-mapa-polska .nv-list-title{
+      color:#ffffff; font-size:15px; font-weight:700; margin:0 0 4px;
+    }
+    #nv-mapa-polska .nv-list-sub{
+      color:rgba(255,255,255,.55); font-size:13px; margin:0 0 20px;
+    }
+    #nv-mapa-polska .nv-chip-grid{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+      overflow-y:auto; padding-right:4px; margin:0 -4px 0 0;
+    }
+    #nv-mapa-polska .nv-chip{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:12px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.09);
+      text-decoration:none; transition:background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    #nv-mapa-polska .nv-chip:hover,
+    #nv-mapa-polska .nv-chip.is-active{
+      background:rgba(59,91,254,.22); border-color:rgba(124,147,255,.55); transform:translateY(-1px);
+    }
+    #nv-mapa-polska .nv-chip-dot{
+      width:8px; height:8px; border-radius:50%; background:var(--nv-blue-light); flex:none;
+    }
+    #nv-mapa-polska .nv-chip-text{ display:flex; flex-direction:column; min-width:0; flex:1; }
+    #nv-mapa-polska .nv-chip-text strong{
+      font-size:13.5px; color:#ffffff; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    #nv-mapa-polska .nv-chip-text small{
+      font-size:11.5px; color:rgba(255,255,255,.5); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    #nv-mapa-polska .nv-chip-arrow{
+      color:rgba(255,255,255,.4); font-size:14px; flex:none; transition:color .2s ease, transform .2s ease;
+    }
+    #nv-mapa-polska .nv-chip:hover .nv-chip-arrow,
+    #nv-mapa-polska .nv-chip.is-active .nv-chip-arrow{ color:#ffffff; transform:translateX(2px); }
+
+    @media (max-width:900px){
+      #nv-mapa-polska{ padding:60px 16px; }
+      #nv-mapa-polska .nv-panel{ grid-template-columns:1fr; }
+      #nv-mapa-polska .nv-list-side{ border-left:none; border-top:1px solid rgba(255,255,255,.08); }
+      #nv-mapa-polska .nv-badge{ position:static; margin:0 24px 24px; align-self:flex-start; }
+      #nv-mapa-polska .nv-map-side{ padding-bottom:12px; }
+    }
+    @media (max-width:520px){
+      #nv-mapa-polska .nv-chip-grid{ grid-template-columns:1fr; max-height:none; }
+      #nv-mapa-polska h2{ font-size:26px; }
+    }
+  </style>
+
+  <div class="nv-wrap">
+    <div class="nv-head">
+      <span class="nv-eyebrow">Zasieg ogolnopolski</span>
+      <h2>Terminale platnicze i kasy fiskalne <span>w Twoim wojewodztwie</span></h2>
+      <p>Obslugujemy klientow w calej Polsce. Kliknij wojewodztwo na mapie albo wybierz miasto z listy, aby zobaczyc lokalna oferte terminali platniczych i kas fiskalnych.</p>
+    </div>
+
+    <div class="nv-panel">
+      <div class="nv-glow" aria-hidden="true"></div>
+
+      <div class="nv-map-side">
+        <svg class="nv-map-svg" viewBox="0 0 640 604.7" role="img" aria-label="Mapa Polski z podzialem na wojewodztwa">
+          <g class="nv-regions">
+      <a href="strona-a.html" class="nv-region-link" aria-label="Terminale platnicze Wrocław - wojewodztwo Dolnośląskie" data-region="dolnoslaskie" data-city="Wrocław" data-name="Dolnośląskie" data-letter="A"><path class="nv-region" d="M62.6,357.9 L75.8,347.9 L83.8,352.6 L85.5,347.3 L87.8,347.4 L88.1,341.6 L94.6,341.6 L101.7,349.3 L108.4,342.6 L108.4,339.4 L115.1,337.0 L117.2,328.4 L115.0,327.3 L118.1,322.1 L126.6,316.9 L123.9,315.0 L125.3,313.8 L137.0,317.8 L136.1,323.1 L139.1,322.7 L143.0,328.0 L148.9,322.5 L150.2,317.5 L155.3,315.1 L165.1,319.6 L167.0,323.3 L165.6,328.3 L173.7,329.7 L175.8,334.6 L185.6,339.7 L201.2,336.9 L200.8,333.2 L203.1,330.3 L218.8,332.8 L223.8,340.5 L219.8,343.3 L221.8,354.0 L234.2,353.4 L232.2,360.0 L234.4,361.1 L234.2,369.8 L237.5,375.2 L229.4,378.3 L225.5,375.4 L221.7,379.0 L223.9,386.2 L220.1,388.5 L221.4,395.4 L214.6,397.7 L214.3,403.5 L211.4,402.0 L209.7,404.5 L212.3,407.0 L208.3,409.5 L209.4,416.0 L204.9,415.7 L205.8,420.2 L201.7,423.1 L203.9,425.5 L202.5,426.4 L203.1,432.6 L195.4,433.8 L191.9,440.3 L190.8,448.0 L185.4,445.8 L179.8,452.6 L184.7,463.1 L189.0,466.0 L189.7,471.5 L188.0,473.0 L186.5,470.2 L178.4,474.0 L169.8,485.0 L162.5,480.5 L160.6,472.5 L152.6,462.2 L149.8,461.7 L148.4,456.7 L143.3,457.8 L138.4,451.7 L145.3,444.1 L148.4,444.4 L153.5,436.7 L147.2,428.3 L140.5,427.4 L137.6,431.8 L132.3,428.3 L127.5,434.7 L125.3,433.0 L127.4,431.5 L125.5,426.1 L117.5,427.1 L114.4,419.0 L107.9,420.8 L91.4,413.7 L88.0,417.0 L86.1,409.5 L81.4,405.5 L81.2,396.6 L76.0,396.5 L74.8,392.6 L72.2,395.5 L68.4,392.4 L63.4,393.3 L62.3,395.4 L65.2,397.4 L64.4,407.4 L53.3,407.4 L62.0,389.3 L66.6,370.0 L62.6,357.9 Z"/></a>
+      <a href="strona-b.html" class="nv-region-link" aria-label="Terminale platnicze Bydgoszcz - wojewodztwo Kujawsko-Pomorskie" data-region="kujawsko-pomorskie" data-city="Bydgoszcz" data-name="Kujawsko-Pomorskie" data-letter="B"><path class="nv-region" d="M212.1,144.7 L215.7,133.6 L220.0,131.3 L220.4,135.0 L229.5,136.4 L228.8,133.3 L232.3,133.4 L231.5,130.4 L233.9,124.6 L243.0,122.3 L241.6,117.5 L250.5,121.3 L254.3,115.4 L265.6,119.1 L266.1,123.5 L281.8,123.3 L283.8,128.1 L297.0,123.7 L295.5,130.1 L297.3,133.2 L324.0,136.8 L324.3,142.5 L328.1,149.6 L326.8,151.1 L330.4,154.5 L335.6,152.0 L339.2,156.4 L343.3,156.3 L344.8,159.9 L354.3,159.4 L356.5,165.4 L354.3,170.4 L358.1,172.7 L358.7,178.7 L351.1,183.1 L353.9,191.7 L353.7,198.3 L346.0,194.9 L347.2,198.3 L339.1,200.1 L343.0,207.2 L337.8,211.2 L344.0,219.2 L342.6,220.2 L343.9,223.6 L338.9,221.7 L338.2,226.8 L334.7,230.3 L337.6,234.0 L332.7,237.4 L332.2,241.5 L336.0,242.9 L331.2,249.3 L327.7,249.8 L329.9,251.6 L329.6,254.3 L324.6,257.5 L325.1,259.9 L313.4,260.7 L306.7,254.2 L306.2,257.4 L296.4,260.7 L289.7,248.8 L280.1,243.6 L273.8,247.1 L272.2,239.7 L265.9,245.9 L262.4,245.7 L255.5,242.1 L255.7,238.7 L249.0,239.7 L249.6,236.4 L245.3,235.4 L242.3,229.9 L235.1,228.1 L229.9,233.7 L229.8,229.1 L226.9,228.4 L227.0,222.9 L217.1,225.7 L218.0,221.0 L213.1,216.7 L219.3,214.4 L220.0,201.0 L206.6,194.3 L208.5,192.1 L208.0,186.2 L210.4,184.8 L209.7,180.9 L211.7,179.3 L208.9,178.4 L208.4,172.0 L213.0,171.3 L215.0,167.0 L203.3,155.7 L212.1,144.7 Z"/></a>
+      <a href="strona-c.html" class="nv-region-link" aria-label="Terminale platnicze Łódź - wojewodztwo Łódzkie" data-region="lodzkie" data-city="Łódź" data-name="Łódzkie" data-letter="C"><path class="nv-region" d="M329.6,254.3 L333.6,259.0 L343.2,259.7 L352.1,267.7 L368.2,262.5 L372.3,267.7 L375.6,266.7 L379.1,270.4 L378.4,274.7 L380.4,278.1 L390.6,282.9 L389.9,287.7 L386.4,290.2 L391.0,295.1 L388.6,300.0 L393.5,301.9 L400.1,299.1 L404.8,304.5 L408.5,304.7 L411.7,311.5 L408.2,313.0 L409.5,319.4 L414.2,321.9 L413.8,326.5 L410.4,328.3 L401.5,324.9 L398.0,327.2 L397.3,330.1 L402.4,338.4 L401.3,343.8 L406.9,345.1 L400.0,356.6 L400.1,360.8 L396.4,363.3 L396.9,369.7 L388.5,368.7 L389.8,373.0 L385.5,374.7 L373.8,374.2 L375.1,377.5 L372.8,379.5 L372.8,386.4 L377.4,387.5 L375.6,397.1 L365.8,388.7 L363.1,395.8 L363.5,402.7 L355.7,409.6 L347.6,403.5 L342.5,405.6 L337.3,394.0 L333.3,394.8 L331.6,389.8 L327.7,391.1 L327.9,394.2 L325.7,395.6 L308.5,384.2 L304.3,388.4 L290.6,388.9 L285.9,386.0 L283.9,380.5 L280.1,385.3 L260.2,377.9 L261.0,366.9 L256.8,367.7 L254.9,358.7 L262.3,354.9 L263.4,348.9 L270.0,352.3 L273.3,346.7 L271.5,331.6 L273.4,329.0 L271.7,328.2 L275.2,323.6 L277.0,311.6 L280.9,308.5 L281.7,310.7 L292.3,311.7 L292.9,307.7 L298.7,300.8 L294.5,297.0 L293.7,287.3 L306.8,285.2 L307.2,273.3 L317.1,273.4 L317.8,267.4 L313.6,267.0 L314.5,260.8 L325.1,259.9 L324.6,257.5 L329.6,254.3 Z"/></a>
+      <a href="strona-d.html" class="nv-region-link" aria-label="Terminale platnicze Lublin - wojewodztwo Lubelskie" data-region="lubelskie" data-city="Lublin" data-name="Lubelskie" data-letter="D"><path class="nv-region" d="M567.2,265.5 L571.3,266.2 L571.7,271.4 L590.0,276.1 L589.1,278.8 L592.9,283.1 L596.1,282.4 L599.3,286.1 L601.3,295.5 L596.8,302.5 L598.3,305.1 L596.5,306.5 L596.5,311.3 L598.5,313.8 L591.6,321.3 L593.5,324.5 L592.3,329.6 L593.9,340.8 L600.5,346.0 L599.4,349.7 L602.4,352.2 L598.7,363.3 L612.2,378.5 L612.3,384.0 L615.2,386.7 L615.8,393.7 L619.1,399.3 L630.0,407.7 L620.1,410.9 L618.4,415.2 L621.9,417.3 L622.4,421.9 L625.1,422.3 L626.9,430.9 L623.0,450.0 L620.7,453.4 L604.0,455.8 L592.6,469.8 L590.4,468.5 L591.0,465.1 L584.6,463.8 L585.9,459.9 L581.1,453.4 L575.1,458.1 L570.2,454.9 L560.1,465.8 L536.5,464.2 L534.6,461.9 L539.6,459.2 L528.4,460.2 L522.4,454.8 L525.5,451.1 L524.7,448.4 L533.1,447.0 L530.5,446.2 L532.3,443.6 L529.4,443.7 L530.3,437.4 L506.6,427.6 L510.6,418.4 L508.3,414.1 L501.8,412.1 L491.6,416.8 L487.4,410.4 L484.8,392.4 L486.3,388.7 L484.4,384.1 L486.0,378.8 L484.0,376.4 L486.7,365.4 L484.4,364.9 L488.0,358.8 L482.3,354.2 L487.2,352.6 L489.2,346.8 L485.9,337.8 L479.3,337.9 L473.4,332.5 L475.3,328.5 L481.7,333.1 L482.4,330.2 L491.3,324.7 L488.0,318.7 L494.8,314.4 L492.8,310.1 L489.3,311.3 L488.1,308.9 L491.6,305.2 L489.6,298.3 L492.6,294.2 L499.8,290.5 L505.2,292.6 L506.7,290.1 L513.7,291.8 L517.5,289.1 L518.6,292.4 L523.3,291.7 L528.0,286.8 L535.7,292.6 L538.6,287.9 L537.3,285.1 L540.8,281.8 L546.8,286.3 L553.3,286.6 L554.2,282.1 L557.2,282.4 L555.6,280.0 L558.7,276.0 L563.9,276.5 L561.6,271.8 L567.2,265.5 Z"/></a>
+      <a href="strona-e.html" class="nv-region-link" aria-label="Terminale platnicze Zielona Góra - wojewodztwo Lubuskie" data-region="lubuskie" data-city="Zielona Góra" data-name="Lubuskie" data-letter="E"><path class="nv-region" d="M39.5,233.3 L41.6,228.0 L48.7,229.1 L52.0,217.6 L55.6,215.3 L55.2,211.4 L59.1,210.2 L57.0,208.3 L58.7,205.9 L68.9,210.7 L84.4,204.3 L81.9,198.1 L86.9,198.9 L98.5,192.3 L109.1,194.4 L113.9,190.0 L112.3,187.7 L117.3,184.1 L117.0,181.6 L125.2,183.5 L125.7,186.4 L122.8,189.9 L124.6,208.1 L119.5,212.8 L122.0,213.7 L122.7,220.9 L114.1,222.8 L115.1,226.3 L112.8,233.3 L117.0,239.0 L115.7,241.7 L120.0,249.7 L114.7,250.1 L120.2,254.8 L117.3,268.0 L118.8,279.0 L117.2,284.1 L124.8,286.9 L123.7,292.4 L127.2,296.7 L133.6,295.0 L134.6,301.5 L132.3,304.7 L138.5,307.2 L141.3,303.6 L144.3,304.5 L149.9,309.1 L152.1,315.8 L143.0,328.0 L139.1,322.7 L136.1,323.1 L137.0,317.8 L125.3,313.8 L123.9,315.0 L126.6,316.9 L118.1,322.1 L115.0,327.3 L117.2,328.4 L115.1,337.0 L108.4,339.4 L108.4,342.6 L101.7,349.3 L94.6,341.6 L88.1,341.6 L87.8,347.4 L85.5,347.3 L83.8,352.6 L75.8,347.9 L62.6,357.9 L60.9,347.0 L47.5,341.2 L46.4,338.3 L49.7,333.6 L49.2,328.3 L39.0,312.1 L45.4,304.0 L49.3,287.7 L44.6,282.5 L46.6,270.6 L39.3,266.9 L35.5,254.9 L41.7,244.5 L39.8,241.1 L41.7,236.4 L39.5,233.3 Z"/></a>
+      <a href="strona-f.html" class="nv-region-link" aria-label="Terminale platnicze Kraków - wojewodztwo Małopolskie" data-region="malopolskie" data-city="Kraków" data-name="Małopolskie" data-letter="F"><path class="nv-region" d="M370.4,444.1 L390.4,448.0 L394.5,458.4 L392.0,461.3 L396.2,465.2 L394.9,467.5 L399.0,475.3 L416.7,472.9 L422.3,465.7 L425.8,467.0 L448.2,459.1 L448.8,463.1 L444.3,468.6 L446.2,472.9 L444.7,480.1 L448.1,484.6 L445.0,488.7 L447.5,491.4 L444.9,495.9 L446.9,501.6 L453.7,503.8 L450.2,505.6 L449.6,509.0 L444.0,510.6 L445.6,512.3 L445.1,516.6 L454.3,519.0 L457.3,524.9 L457.9,530.8 L455.4,534.4 L461.1,545.1 L459.4,546.4 L459.9,551.5 L452.9,549.0 L447.3,554.7 L443.4,551.5 L438.4,553.2 L441.8,557.3 L430.9,565.1 L427.0,560.1 L422.9,560.4 L419.3,553.2 L411.5,553.2 L409.1,557.2 L402.6,553.3 L394.3,554.5 L393.4,559.9 L387.3,559.6 L381.9,564.4 L378.9,576.7 L370.1,571.4 L365.7,575.2 L359.4,574.2 L359.2,571.3 L362.6,567.2 L360.4,553.7 L356.3,556.1 L350.8,553.8 L351.2,549.1 L346.8,547.6 L344.4,537.6 L340.7,535.2 L341.5,527.9 L335.5,525.3 L340.2,520.7 L339.5,517.3 L332.1,516.1 L330.1,507.9 L322.7,508.6 L324.9,500.2 L317.5,498.7 L320.8,490.2 L325.4,488.3 L327.1,481.5 L327.7,483.5 L328.8,480.5 L332.9,479.9 L334.3,477.8 L333.1,475.9 L338.2,472.7 L330.9,465.4 L342.1,462.2 L342.3,458.8 L340.0,457.1 L342.5,457.6 L344.5,452.7 L364.3,450.7 L371.4,447.0 L370.4,444.1 Z"/></a>
+      <a href="strona-g.html" class="nv-region-link" aria-label="Terminale platnicze Warszawa - wojewodztwo Mazowieckie" data-region="mazowieckie" data-city="Warszawa" data-name="Mazowieckie" data-letter="G"><path class="nv-region" d="M358.7,178.7 L364.0,179.4 L363.2,175.7 L367.3,172.3 L368.4,176.8 L372.4,179.2 L379.7,177.3 L393.5,180.0 L397.4,177.6 L396.8,173.0 L401.7,169.3 L407.7,171.4 L414.1,168.8 L417.6,162.8 L425.9,164.6 L431.5,157.8 L438.4,160.3 L452.3,150.7 L457.7,151.7 L463.2,147.3 L472.3,145.7 L474.0,152.9 L477.5,157.1 L475.6,160.7 L480.8,162.6 L475.8,162.1 L476.0,167.6 L474.6,167.9 L478.7,180.6 L485.2,182.4 L489.2,187.9 L493.4,186.7 L493.4,190.0 L490.8,189.3 L489.7,192.9 L497.0,196.7 L498.8,199.8 L496.7,202.0 L497.4,206.1 L505.1,208.4 L513.7,204.8 L516.1,208.5 L512.3,209.9 L514.6,215.7 L517.7,217.7 L521.2,213.9 L525.3,215.1 L525.7,227.9 L521.4,232.7 L529.6,241.7 L528.7,245.8 L531.3,247.9 L530.6,251.7 L532.2,253.7 L542.5,257.3 L555.9,257.0 L561.8,261.5 L562.6,265.6 L567.2,265.5 L561.6,271.8 L563.9,276.5 L558.7,276.0 L555.6,280.0 L557.2,282.4 L554.2,282.1 L553.3,286.6 L546.8,286.3 L540.8,281.8 L537.3,285.1 L538.6,287.9 L535.7,292.6 L528.0,286.8 L523.3,291.7 L518.6,292.4 L517.5,289.1 L513.7,291.8 L506.7,290.1 L505.2,292.6 L499.8,290.5 L490.5,295.9 L489.7,299.9 L491.6,305.2 L488.1,308.9 L489.3,311.3 L492.8,310.1 L494.8,314.4 L488.0,318.7 L491.3,324.7 L482.4,330.2 L481.7,333.1 L475.3,328.5 L473.4,332.5 L479.3,337.9 L485.9,337.8 L489.2,346.8 L487.2,352.6 L482.3,354.2 L488.0,358.8 L484.4,364.9 L486.7,365.4 L484.1,374.7 L486.0,378.8 L484.4,381.5 L485.2,387.7 L482.2,390.6 L474.8,386.8 L467.1,388.7 L464.0,393.1 L459.0,390.3 L457.1,385.9 L444.7,386.3 L444.8,382.0 L440.9,378.9 L442.7,375.7 L440.4,372.9 L438.9,378.6 L435.2,379.9 L428.9,377.3 L428.6,380.9 L426.5,381.8 L417.9,377.2 L415.9,379.4 L416.7,374.8 L410.9,369.8 L407.7,370.8 L406.6,364.7 L404.1,362.5 L405.7,360.5 L399.6,358.0 L406.9,345.1 L401.3,343.8 L402.4,338.4 L397.3,330.1 L398.0,327.2 L401.5,324.9 L410.4,328.3 L413.8,326.5 L414.2,321.9 L409.5,319.4 L408.2,313.0 L411.7,311.5 L408.5,304.7 L404.8,304.5 L400.1,299.1 L393.5,301.9 L388.6,300.0 L391.0,295.1 L386.4,290.2 L389.9,287.7 L390.6,282.9 L380.4,278.1 L378.4,274.7 L379.1,270.4 L375.6,266.7 L372.3,267.7 L368.2,262.5 L352.1,267.7 L340.3,258.2 L332.3,258.3 L327.8,250.5 L336.0,242.9 L332.2,241.5 L332.7,237.4 L337.6,234.0 L334.4,231.5 L338.2,226.8 L338.9,221.7 L343.9,223.6 L342.6,220.2 L344.0,219.2 L337.8,211.2 L343.0,207.2 L339.1,200.1 L347.2,198.3 L346.0,194.9 L353.7,198.3 L353.9,191.7 L351.1,183.1 L358.7,178.7 Z"/></a>
+      <a href="strona-h.html" class="nv-region-link" aria-label="Terminale platnicze Opole - wojewodztwo Opolskie" data-region="opolskie" data-city="Opole" data-name="Opolskie" data-letter="H"><path class="nv-region" d="M237.5,375.2 L240.6,377.3 L238.9,382.6 L242.7,383.9 L259.7,376.9 L280.1,385.3 L283.9,380.5 L285.9,386.0 L292.6,391.5 L288.2,398.0 L289.7,401.7 L288.5,408.0 L281.5,414.4 L285.6,420.2 L280.1,424.1 L282.8,432.2 L287.0,434.1 L287.3,439.3 L276.8,440.0 L279.6,448.6 L273.3,446.2 L272.3,452.7 L274.2,455.7 L271.9,459.0 L275.0,462.9 L276.2,469.9 L271.6,468.8 L264.4,473.2 L265.2,475.4 L253.6,477.6 L253.9,483.9 L250.1,489.4 L252.6,493.1 L241.7,497.5 L236.0,492.8 L233.1,485.0 L224.6,478.7 L234.8,474.0 L235.2,471.0 L232.7,468.9 L234.4,464.7 L232.3,462.5 L230.4,461.8 L230.5,464.5 L225.9,468.0 L215.2,469.4 L212.2,466.4 L209.5,467.9 L209.1,462.4 L203.3,461.3 L200.5,456.0 L182.4,449.8 L185.4,445.8 L190.8,448.0 L191.9,440.3 L195.4,433.8 L203.1,432.6 L202.5,426.4 L203.9,425.5 L201.7,423.1 L205.8,420.2 L204.9,415.7 L209.4,416.0 L208.3,409.5 L212.3,407.0 L209.7,404.5 L211.4,402.0 L214.3,403.5 L214.6,397.7 L221.4,395.4 L220.1,388.5 L223.9,386.2 L221.7,379.0 L225.5,375.4 L229.4,378.3 L237.5,375.2 Z"/></a>
+      <a href="strona-i.html" class="nv-region-link" aria-label="Terminale platnicze Rzeszów - wojewodztwo Podkarpackie" data-region="podkarpackie" data-city="Rzeszów" data-name="Podkarpackie" data-letter="I"><path class="nv-region" d="M489.0,413.5 L491.6,416.8 L501.8,412.1 L508.3,414.1 L510.6,418.4 L506.6,427.6 L510.7,427.6 L513.7,431.9 L523.6,436.3 L529.2,436.1 L529.4,443.7 L532.3,443.6 L530.5,446.2 L533.1,447.0 L524.7,448.4 L525.5,451.1 L522.4,454.8 L528.4,460.2 L539.6,459.2 L534.8,463.7 L560.1,465.8 L570.2,454.9 L575.1,458.1 L581.1,453.4 L585.9,459.9 L584.6,463.8 L591.0,465.1 L590.4,468.5 L592.5,468.9 L576.3,484.3 L536.9,541.8 L540.4,545.4 L543.4,558.6 L543.0,570.0 L541.5,571.4 L543.1,572.9 L541.0,577.3 L544.0,576.8 L543.0,579.0 L552.4,585.5 L550.8,588.2 L552.3,594.1 L544.6,589.5 L539.4,590.9 L534.3,585.5 L523.7,585.0 L519.8,580.3 L511.2,579.6 L511.1,576.5 L500.3,573.1 L499.2,566.9 L495.0,560.2 L487.4,555.8 L483.3,559.1 L474.5,550.0 L462.1,553.6 L459.6,549.4 L461.1,545.1 L455.6,536.0 L457.9,529.4 L455.1,519.7 L445.1,516.6 L444.1,509.7 L449.6,509.0 L450.2,505.6 L453.7,503.8 L446.9,501.6 L444.9,495.9 L447.5,491.4 L445.0,488.7 L448.1,484.6 L444.7,480.1 L446.2,472.9 L444.3,468.6 L448.8,463.1 L448.2,459.1 L454.7,452.3 L462.9,448.8 L463.1,445.3 L472.6,442.6 L477.0,433.7 L484.0,430.4 L489.0,413.5 Z"/></a>
+      <a href="strona-j.html" class="nv-region-link" aria-label="Terminale platnicze Białystok - wojewodztwo Podlaskie" data-region="podlaskie" data-city="Białystok" data-name="Podlaskie" data-letter="J"><path class="nv-region" d="M570.1,265.7 L562.6,265.6 L561.8,261.5 L555.9,257.0 L542.5,257.3 L532.2,253.7 L530.6,251.7 L531.3,247.9 L528.7,245.8 L529.6,241.7 L521.4,232.7 L525.7,227.9 L525.3,215.1 L521.2,213.9 L517.7,217.7 L514.6,215.7 L512.3,209.9 L516.1,208.5 L513.7,204.8 L505.1,208.4 L497.4,206.1 L496.7,202.0 L498.8,199.8 L497.0,196.7 L489.7,192.9 L490.8,189.3 L493.4,190.0 L493.4,186.7 L489.2,187.9 L485.2,182.4 L478.7,180.6 L474.6,167.9 L476.0,167.6 L475.8,162.1 L480.8,162.6 L475.6,160.7 L477.5,157.1 L474.0,152.9 L472.3,145.7 L488.6,148.0 L493.0,142.7 L498.5,144.0 L523.3,125.6 L526.3,127.3 L526.2,123.8 L540.3,117.6 L546.5,105.9 L545.9,101.8 L535.2,87.7 L536.7,83.9 L534.1,78.7 L531.2,79.0 L526.6,73.4 L536.8,65.4 L545.7,63.9 L545.9,57.2 L550.1,52.6 L559.6,55.3 L558.6,57.4 L562.9,59.5 L561.6,62.0 L564.6,63.7 L567.6,62.1 L573.5,67.6 L579.8,68.6 L589.1,78.5 L591.6,87.2 L588.8,93.9 L592.8,108.2 L593.1,117.2 L608.4,166.7 L615.5,177.7 L612.9,186.0 L617.5,198.1 L615.6,200.2 L617.0,222.7 L604.4,233.3 L588.2,238.7 L570.1,265.7 Z"/></a>
+      <a href="strona-k.html" class="nv-region-link" aria-label="Terminale platnicze Gdańsk - wojewodztwo Pomorskie" data-region="pomorskie" data-city="Gdańsk" data-name="Pomorskie" data-letter="K"><path class="nv-region" d="M327.9,66.2 L331.6,72.6 L327.2,76.4 L328.3,79.0 L325.4,86.7 L329.9,88.6 L329.9,92.1 L337.3,93.8 L335.6,98.5 L337.1,99.9 L348.6,98.6 L340.9,115.2 L333.5,111.4 L331.1,113.0 L330.5,118.6 L325.5,123.9 L325.1,129.2 L320.1,132.4 L320.5,135.3 L305.6,136.0 L296.6,132.8 L295.5,129.4 L298.2,124.1 L290.2,124.2 L283.8,128.1 L281.8,123.3 L266.1,123.5 L265.6,119.1 L254.3,115.4 L250.5,121.3 L240.8,117.7 L243.0,122.3 L233.9,124.6 L231.5,130.4 L232.3,133.4 L228.8,133.3 L229.5,136.4 L220.4,135.0 L220.0,131.3 L215.7,133.6 L212.1,144.7 L204.5,140.0 L188.3,142.0 L188.0,138.8 L185.3,138.9 L181.7,131.6 L179.1,119.0 L184.5,113.8 L179.9,110.2 L180.0,107.0 L186.7,103.9 L179.9,98.9 L178.2,93.9 L175.8,94.1 L174.6,91.2 L176.5,87.8 L174.5,84.1 L175.8,81.9 L170.3,72.2 L179.6,65.2 L176.5,61.7 L176.0,56.9 L178.6,55.4 L178.3,48.9 L173.9,44.6 L171.0,36.8 L181.1,34.4 L190.8,26.7 L209.8,18.6 L247.8,10.4 L269.0,10.0 L300.3,30.5 L299.7,34.2 L292.3,24.1 L276.1,14.8 L274.3,19.1 L278.7,24.0 L278.7,30.2 L281.4,30.2 L283.2,35.2 L284.3,38.3 L281.5,39.2 L283.7,40.3 L285.1,49.0 L295.2,56.2 L305.3,59.0 L324.6,58.3 L351.3,48.7 L325.5,60.1 L327.9,66.2 Z"/></a>
+      <a href="strona-l.html" class="nv-region-link" aria-label="Terminale platnicze Katowice - wojewodztwo Śląskie" data-region="slaskie" data-city="Katowice" data-name="Śląskie" data-letter="L"><path class="nv-region" d="M290.9,388.9 L304.3,388.4 L308.5,384.2 L325.7,395.6 L327.9,394.2 L327.7,391.1 L331.6,389.8 L333.3,394.8 L337.3,394.0 L342.5,405.6 L347.6,403.5 L353.0,406.0 L353.5,409.3 L361.8,409.8 L363.3,413.7 L355.3,418.9 L356.8,422.4 L366.1,424.9 L364.5,428.5 L368.4,428.9 L368.1,432.3 L365.0,432.4 L360.3,439.1 L367.3,440.6 L371.4,447.0 L364.3,450.7 L344.5,452.7 L342.5,457.6 L340.0,457.1 L342.3,458.8 L342.1,462.2 L330.9,465.4 L338.3,471.9 L337.6,474.1 L333.1,475.9 L334.3,477.8 L332.9,479.9 L328.8,480.5 L327.7,483.5 L327.1,481.5 L325.4,488.3 L322.1,488.7 L318.5,494.8 L318.1,500.4 L324.9,500.2 L322.7,508.6 L330.1,507.9 L332.1,516.1 L339.5,517.3 L340.2,520.7 L335.5,525.3 L341.5,527.9 L340.7,533.6 L334.3,540.9 L326.2,543.7 L323.5,553.8 L310.0,554.8 L309.9,544.5 L301.5,542.5 L302.9,539.8 L299.5,526.9 L288.4,522.5 L285.0,512.0 L287.0,509.1 L284.7,506.7 L285.1,502.6 L280.0,504.3 L270.8,500.2 L269.3,502.8 L262.5,494.9 L256.4,494.7 L255.3,490.3 L251.9,488.2 L253.9,483.9 L253.6,477.6 L265.2,475.4 L264.4,473.2 L271.6,468.8 L276.2,469.9 L275.0,462.9 L271.9,459.0 L274.2,455.7 L272.3,452.7 L273.3,446.2 L279.6,448.6 L276.8,440.0 L287.3,439.3 L287.0,434.1 L282.8,432.2 L280.1,424.1 L285.6,420.2 L281.5,414.4 L288.5,408.0 L289.7,401.7 L288.2,398.0 L292.6,392.8 L290.9,388.9 Z"/></a>
+      <a href="strona-m.html" class="nv-region-link" aria-label="Terminale platnicze Kielce - wojewodztwo Świętokrzyskie" data-region="swietokrzyskie" data-city="Kielce" data-name="Świętokrzyskie" data-letter="M"><path class="nv-region" d="M400.0,359.2 L405.7,360.5 L404.1,362.5 L406.6,364.7 L407.7,370.8 L410.9,369.8 L416.7,374.8 L415.9,379.4 L417.9,377.2 L426.5,381.8 L428.6,380.9 L428.9,377.3 L435.2,379.9 L438.9,378.6 L440.4,372.9 L442.7,375.7 L440.9,378.9 L444.8,382.0 L444.7,386.3 L457.1,385.9 L459.0,390.3 L464.0,393.1 L467.1,388.7 L477.1,386.7 L482.2,390.6 L485.2,387.7 L489.0,413.5 L487.5,420.8 L484.0,430.4 L477.0,433.7 L472.6,442.6 L463.1,445.3 L462.9,448.8 L454.7,452.3 L446.6,461.4 L443.8,459.1 L425.8,467.0 L422.3,465.7 L416.7,472.9 L399.0,475.3 L394.9,467.5 L396.2,465.2 L392.0,461.3 L394.5,458.4 L390.4,448.0 L372.7,442.6 L369.4,444.3 L367.3,440.6 L360.3,439.1 L365.0,432.4 L368.1,432.3 L368.4,428.9 L364.5,428.5 L366.1,424.9 L356.8,422.4 L355.3,418.9 L363.3,413.7 L358.1,408.1 L363.5,402.7 L363.1,395.8 L365.8,388.7 L375.6,397.1 L377.4,387.5 L372.8,386.4 L372.8,379.5 L375.1,377.5 L373.8,374.2 L389.0,373.7 L389.5,368.5 L396.4,370.7 L397.7,367.4 L396.4,363.3 L400.0,359.2 Z"/></a>
+      <a href="strona-n.html" class="nv-region-link" aria-label="Terminale platnicze Olsztyn - wojewodztwo Warmińsko-Mazurskie" data-region="warminsko-mazurskie" data-city="Olsztyn" data-name="Warmińsko-Mazurskie" data-letter="N"><path class="nv-region" d="M545.9,57.2 L545.7,63.9 L536.8,65.4 L526.6,73.4 L531.2,79.0 L534.1,78.7 L536.7,83.9 L535.2,87.7 L545.9,101.8 L546.5,105.9 L540.3,117.6 L526.2,123.8 L526.3,127.3 L523.3,125.6 L498.5,144.0 L496.6,141.6 L488.6,148.0 L477.5,144.6 L463.2,147.3 L457.7,151.7 L452.3,150.7 L438.4,160.3 L431.5,157.8 L425.9,164.6 L419.6,162.3 L416.3,163.7 L414.1,168.8 L407.7,171.4 L401.7,169.3 L396.8,173.0 L397.4,177.6 L393.5,180.0 L379.7,177.3 L372.4,179.2 L368.4,176.8 L367.3,172.3 L363.2,175.7 L364.0,179.4 L358.7,178.7 L358.1,172.7 L354.3,170.4 L356.5,165.4 L354.3,159.4 L344.8,159.9 L343.3,156.3 L339.2,156.4 L335.6,152.0 L328.5,153.1 L324.0,136.8 L320.0,133.2 L325.1,129.2 L325.5,123.9 L330.5,118.6 L332.5,111.4 L340.9,115.2 L348.6,98.6 L337.1,99.9 L335.6,98.5 L337.3,93.8 L329.9,92.1 L329.9,88.6 L325.4,86.7 L328.3,79.0 L327.2,76.4 L331.6,72.6 L327.9,66.2 L335.9,66.7 L334.8,71.8 L338.8,64.9 L353.2,58.1 L358.1,50.3 L463.0,62.2 L545.9,57.2 Z"/></a>
+      <a href="strona-o.html" class="nv-region-link" aria-label="Terminale platnicze Poznań - wojewodztwo Wielkopolskie" data-region="wielkopolskie" data-city="Poznań" data-name="Wielkopolskie" data-letter="O"><path class="nv-region" d="M181.3,128.0 L188.3,142.0 L204.5,140.0 L212.1,144.7 L203.3,155.7 L215.0,167.0 L213.0,171.3 L208.4,172.0 L208.9,178.4 L211.7,179.3 L209.7,180.9 L210.4,184.8 L208.0,186.2 L208.5,192.1 L206.6,194.3 L220.0,201.0 L219.3,214.4 L213.1,216.7 L218.0,221.0 L217.1,225.7 L227.0,222.9 L226.9,228.4 L229.8,229.1 L229.9,233.7 L235.1,228.1 L242.3,229.9 L245.3,235.4 L249.6,236.4 L249.0,239.7 L255.7,238.7 L255.5,242.1 L262.4,245.7 L265.9,245.9 L272.2,239.7 L273.8,247.1 L280.1,243.6 L289.7,248.8 L296.4,260.7 L307.9,254.8 L314.5,260.8 L313.6,267.0 L317.8,267.4 L317.1,273.4 L311.2,271.7 L306.6,274.2 L306.0,279.6 L308.1,282.1 L306.8,285.2 L293.7,287.3 L294.5,297.0 L298.7,300.8 L292.9,307.7 L292.3,311.7 L281.7,310.7 L280.9,308.5 L277.0,311.6 L275.2,323.6 L271.7,328.2 L273.4,329.0 L271.5,331.6 L273.3,346.7 L270.0,352.3 L263.4,348.9 L262.3,354.9 L254.9,358.7 L256.8,367.7 L261.2,367.6 L259.2,377.3 L246.1,383.5 L238.9,382.6 L240.3,375.8 L235.5,373.3 L234.4,361.1 L232.2,360.0 L234.2,353.4 L221.8,354.0 L219.8,343.3 L223.8,340.5 L218.8,332.8 L203.1,330.3 L200.8,333.2 L201.2,336.9 L183.5,339.0 L175.8,334.6 L173.7,329.7 L165.6,328.3 L167.0,323.3 L164.9,319.3 L151.0,315.2 L149.9,309.1 L144.3,304.5 L141.3,303.6 L138.5,307.2 L132.3,304.7 L134.6,301.5 L133.6,295.0 L127.2,296.7 L123.7,292.4 L124.8,286.9 L117.2,284.1 L118.8,279.0 L117.3,268.0 L120.2,254.8 L114.7,250.1 L120.0,249.7 L115.7,241.7 L117.0,239.0 L112.8,233.3 L115.1,226.3 L114.1,222.8 L122.7,220.9 L122.0,213.7 L119.5,212.8 L124.6,208.1 L122.8,189.9 L133.3,193.2 L145.5,189.7 L148.5,184.8 L147.3,181.3 L150.1,180.3 L151.3,176.0 L157.7,175.4 L160.7,169.7 L165.6,171.4 L164.9,166.5 L169.9,162.4 L155.4,154.4 L153.8,146.2 L166.0,145.3 L171.1,140.9 L172.8,131.4 L181.3,128.0 Z"/></a>
+      <a href="strona-p.html" class="nv-region-link" aria-label="Terminale platnicze Szczecin - wojewodztwo Zachodniopomorskie" data-region="zachodniopomorskie" data-city="Szczecin" data-name="Zachodniopomorskie" data-letter="P"><path class="nv-region" d="M171.0,36.8 L173.9,44.6 L178.3,48.9 L178.6,55.4 L176.0,56.9 L176.5,61.7 L179.6,65.2 L170.3,72.2 L175.8,81.9 L174.5,84.1 L176.5,87.8 L174.6,91.2 L186.7,103.9 L180.0,107.0 L179.9,110.2 L184.5,113.8 L179.1,119.0 L181.3,128.0 L172.8,131.4 L171.1,140.9 L166.0,145.3 L153.8,146.2 L155.4,154.4 L169.9,162.4 L164.9,166.5 L165.6,171.4 L160.7,169.7 L157.7,175.4 L151.3,176.0 L150.1,180.3 L147.3,181.3 L148.5,184.8 L145.5,189.7 L131.0,192.6 L123.7,189.8 L125.2,183.5 L117.0,181.6 L117.3,184.1 L112.3,187.7 L113.9,190.0 L109.1,194.4 L98.5,192.3 L86.9,198.9 L81.9,198.1 L84.4,204.3 L68.9,210.7 L58.7,205.9 L57.0,208.3 L59.1,210.2 L55.2,211.4 L55.6,215.3 L52.0,217.6 L48.7,229.1 L41.6,228.0 L39.5,233.3 L16.2,212.7 L10.0,210.1 L12.4,205.1 L11.3,197.8 L24.2,187.8 L26.3,179.8 L25.7,173.9 L30.0,167.6 L21.2,138.3 L22.0,132.0 L19.1,126.9 L21.0,119.3 L27.8,125.8 L33.6,126.9 L39.4,134.2 L39.9,127.9 L36.1,125.8 L37.0,118.3 L40.6,116.5 L39.9,111.4 L42.9,103.8 L47.5,99.5 L49.5,100.7 L49.7,94.5 L52.2,90.6 L50.2,90.4 L82.5,78.9 L130.9,66.8 L139.1,61.9 L158.5,39.8 L171.0,36.8 Z"/></a>
+          </g>
+          <g class="nv-dots">
+      <a href="strona-a.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="dolnoslaskie"><g class="nv-dot" data-region="dolnoslaskie"><circle class="nv-dot-pulse" cx="190.3" cy="383.6" r="10"/><circle class="nv-dot-ring" cx="190.3" cy="383.6" r="6.5"/><circle class="nv-dot-core" cx="190.3" cy="383.6" r="3.2"/></g></a>
+      <a href="strona-b.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="kujawsko-pomorskie"><g class="nv-dot" data-region="kujawsko-pomorskie"><circle class="nv-dot-pulse" cx="249.8" cy="181.5" r="10"/><circle class="nv-dot-ring" cx="249.8" cy="181.5" r="6.5"/><circle class="nv-dot-core" cx="249.8" cy="181.5" r="3.2"/></g></a>
+      <a href="strona-c.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="lodzkie"><g class="nv-dot" data-region="lodzkie"><circle class="nv-dot-pulse" cx="339.8" cy="318.3" r="10"/><circle class="nv-dot-ring" cx="339.8" cy="318.3" r="6.5"/><circle class="nv-dot-core" cx="339.8" cy="318.3" r="3.2"/></g></a>
+      <a href="strona-d.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="lubelskie"><g class="nv-dot" data-region="lubelskie"><circle class="nv-dot-pulse" cx="532.3" cy="369.7" r="10"/><circle class="nv-dot-ring" cx="532.3" cy="369.7" r="6.5"/><circle class="nv-dot-core" cx="532.3" cy="369.7" r="3.2"/></g></a>
+      <a href="strona-e.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="lubuskie"><g class="nv-dot" data-region="lubuskie"><circle class="nv-dot-pulse" cx="78.4" cy="300.6" r="10"/><circle class="nv-dot-ring" cx="78.4" cy="300.6" r="6.5"/><circle class="nv-dot-core" cx="78.4" cy="300.6" r="3.2"/></g></a>
+      <a href="strona-f.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="malopolskie"><g class="nv-dot" data-region="malopolskie"><circle class="nv-dot-pulse" cx="370.0" cy="488.2" r="10"/><circle class="nv-dot-ring" cx="370.0" cy="488.2" r="6.5"/><circle class="nv-dot-core" cx="370.0" cy="488.2" r="3.2"/></g></a>
+      <a href="strona-g.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="mazowieckie"><g class="nv-dot" data-region="mazowieckie"><circle class="nv-dot-pulse" cx="436.0" cy="271.1" r="10"/><circle class="nv-dot-ring" cx="436.0" cy="271.1" r="6.5"/><circle class="nv-dot-core" cx="436.0" cy="271.1" r="3.2"/></g></a>
+      <a href="strona-h.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="opolskie"><g class="nv-dot" data-region="opolskie"><circle class="nv-dot-pulse" cx="245.0" cy="427.0" r="10"/><circle class="nv-dot-ring" cx="245.0" cy="427.0" r="6.5"/><circle class="nv-dot-core" cx="245.0" cy="427.0" r="3.2"/></g></a>
+      <a href="strona-i.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="podkarpackie"><g class="nv-dot" data-region="podkarpackie"><circle class="nv-dot-pulse" cx="497.4" cy="490.6" r="10"/><circle class="nv-dot-ring" cx="497.4" cy="490.6" r="6.5"/><circle class="nv-dot-core" cx="497.4" cy="490.6" r="3.2"/></g></a>
+      <a href="strona-j.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="podlaskie"><g class="nv-dot" data-region="podlaskie"><circle class="nv-dot-pulse" cx="569.4" cy="180.6" r="10"/><circle class="nv-dot-ring" cx="569.4" cy="180.6" r="6.5"/><circle class="nv-dot-core" cx="569.4" cy="180.6" r="3.2"/></g></a>
+      <a href="strona-k.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="pomorskie"><g class="nv-dot" data-region="pomorskie"><circle class="nv-dot-pulse" cx="289.7" cy="58.3" r="10"/><circle class="nv-dot-ring" cx="289.7" cy="58.3" r="6.5"/><circle class="nv-dot-core" cx="289.7" cy="58.3" r="3.2"/></g></a>
+      <a href="strona-l.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="slaskie"><g class="nv-dot" data-region="slaskie"><circle class="nv-dot-pulse" cx="313.1" cy="468.1" r="10"/><circle class="nv-dot-ring" cx="313.1" cy="468.1" r="6.5"/><circle class="nv-dot-core" cx="313.1" cy="468.1" r="3.2"/></g></a>
+      <a href="strona-m.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="swietokrzyskie"><g class="nv-dot" data-region="swietokrzyskie"><circle class="nv-dot-pulse" cx="412.3" cy="407.9" r="10"/><circle class="nv-dot-ring" cx="412.3" cy="407.9" r="6.5"/><circle class="nv-dot-core" cx="412.3" cy="407.9" r="3.2"/></g></a>
+      <a href="strona-n.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="warminsko-mazurskie"><g class="nv-dot" data-region="warminsko-mazurskie"><circle class="nv-dot-pulse" cx="403.1" cy="115.9" r="10"/><circle class="nv-dot-ring" cx="403.1" cy="115.9" r="6.5"/><circle class="nv-dot-core" cx="403.1" cy="115.9" r="3.2"/></g></a>
+      <a href="strona-o.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="wielkopolskie"><g class="nv-dot" data-region="wielkopolskie"><circle class="nv-dot-pulse" cx="183.3" cy="253.4" r="10"/><circle class="nv-dot-ring" cx="183.3" cy="253.4" r="6.5"/><circle class="nv-dot-core" cx="183.3" cy="253.4" r="3.2"/></g></a>
+      <a href="strona-p.html" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="zachodniopomorskie"><g class="nv-dot" data-region="zachodniopomorskie"><circle class="nv-dot-pulse" cx="36.6" cy="150.9" r="10"/><circle class="nv-dot-ring" cx="36.6" cy="150.9" r="6.5"/><circle class="nv-dot-core" cx="36.6" cy="150.9" r="3.2"/></g></a>
+          </g>
+        </svg>
+        <div class="nv-tooltip" id="nv-tooltip">
+          <strong id="nv-tooltip-city">Miasto</strong>
+          <small id="nv-tooltip-region">Wojewodztwo</small>
+          <em>Zobacz oferte &#8594;</em>
+        </div>
+        <div class="nv-badge">
+          <b>16</b>
+          <span>WOJEWODZTW W ZASIEGU USLUGI</span>
+        </div>
+      </div>
+
+      <div class="nv-list-side">
+        <p class="nv-list-title">Wybierz swoje miasto</p>
+        <p class="nv-list-sub">16 wojewodztw &middot; oferta terminali i kas fiskalnych</p>
+        <div class="nv-chip-grid">
+        <a href="strona-a.html" class="nv-chip" data-region="dolnoslaskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Wrocław</strong><small>Dolnośląskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-b.html" class="nv-chip" data-region="kujawsko-pomorskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Bydgoszcz</strong><small>Kujawsko-Pomorskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-c.html" class="nv-chip" data-region="lodzkie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Łódź</strong><small>Łódzkie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-d.html" class="nv-chip" data-region="lubelskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Lublin</strong><small>Lubelskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-e.html" class="nv-chip" data-region="lubuskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Zielona Góra</strong><small>Lubuskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-f.html" class="nv-chip" data-region="malopolskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Kraków</strong><small>Małopolskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-g.html" class="nv-chip" data-region="mazowieckie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Warszawa</strong><small>Mazowieckie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-h.html" class="nv-chip" data-region="opolskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Opole</strong><small>Opolskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-i.html" class="nv-chip" data-region="podkarpackie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Rzeszów</strong><small>Podkarpackie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-j.html" class="nv-chip" data-region="podlaskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Białystok</strong><small>Podlaskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-k.html" class="nv-chip" data-region="pomorskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Gdańsk</strong><small>Pomorskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-l.html" class="nv-chip" data-region="slaskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Katowice</strong><small>Śląskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-m.html" class="nv-chip" data-region="swietokrzyskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Kielce</strong><small>Świętokrzyskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-n.html" class="nv-chip" data-region="warminsko-mazurskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Olsztyn</strong><small>Warmińsko-Mazurskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-o.html" class="nv-chip" data-region="wielkopolskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Poznań</strong><small>Wielkopolskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        <a href="strona-p.html" class="nv-chip" data-region="zachodniopomorskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Szczecin</strong><small>Zachodniopomorskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var root = document.getElementById('nv-mapa-polska');
+    if(!root) return;
+    var tooltip = document.getElementById('nv-tooltip');
+    var tCity = document.getElementById('nv-tooltip-city');
+    var tRegion = document.getElementById('nv-tooltip-region');
+    var mapSide = root.querySelector('.nv-map-side');
+
+    function setActive(regionKey){
+      var nodes = root.querySelectorAll('[data-region]');
+      for(var i=0;i<nodes.length;i++){
+        if(nodes[i].getAttribute('data-region') === regionKey){
+          nodes[i].classList.add('is-active');
+        } else {
+          nodes[i].classList.remove('is-active');
+        }
+      }
+    }
+    function clearActive(){
+      var nodes = root.querySelectorAll('.is-active');
+      for(var i=0;i<nodes.length;i++){ nodes[i].classList.remove('is-active'); }
+    }
+    function showTooltip(el, evt){
+      var city = el.getAttribute('data-city');
+      var name = el.getAttribute('data-name');
+      if(!city){
+        var key = el.getAttribute('data-region');
+        var chip = root.querySelector('.nv-chip[data-region="'+key+'"]');
+        if(chip){ city = chip.querySelector('strong').textContent; name = chip.querySelector('small').textContent; }
+      }
+      if(!city) return;
+      tCity.textContent = city;
+      tRegion.textContent = name || '';
+      tooltip.classList.add('is-visible');
+      positionTooltip(evt);
+    }
+    function positionTooltip(evt){
+      if(!evt) return;
+      var rect = mapSide.getBoundingClientRect();
+      var x = evt.clientX - rect.left;
+      var y = evt.clientY - rect.top;
+      var min = 90, max = rect.width - 90;
+      if(x < min) x = min;
+      if(x > max) x = max;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = (y - 8) + 'px';
+    }
+    function hideTooltip(){
+      tooltip.classList.remove('is-visible');
+    }
+
+    var regionLinks = root.querySelectorAll('.nv-region-link, .nv-dot-link');
+    regionLinks.forEach(function(el){
+      var key = el.getAttribute('data-region');
+      el.addEventListener('mouseenter', function(e){ setActive(key); showTooltip(el, e); });
+      el.addEventListener('mousemove', function(e){ positionTooltip(e); });
+      el.addEventListener('mouseleave', function(){ clearActive(); hideTooltip(); });
+      el.addEventListener('focus', function(e){ setActive(key); showTooltip(el, e); });
+      el.addEventListener('blur', function(){ clearActive(); hideTooltip(); });
+    });
+
+    var chips = root.querySelectorAll('.nv-chip');
+    chips.forEach(function(chip){
+      var key = chip.getAttribute('data-region');
+      chip.addEventListener('mouseenter', function(){ setActive(key); });
+      chip.addEventListener('mouseleave', function(){ clearActive(); });
+    });
+  })();
+  </script>
+</section>
