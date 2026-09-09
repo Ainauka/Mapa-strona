@@ -43,15 +43,6 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
     #nv-mapa-polska *{ box-sizing:border-box; }
     #nv-mapa-polska .nv-wrap{ max-width:1100px; margin:0 auto; }
     #nv-mapa-polska .nv-head{ text-align:center; max-width:640px; margin:0 auto 32px; }
-    #nv-mapa-polska .nv-eyebrow{
-      display:inline-flex; align-items:center; gap:8px;
-      font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-      color:var(--nv-blue); margin:0 0 14px;
-    }
-    #nv-mapa-polska .nv-eyebrow::before{
-      content:""; width:8px; height:8px; border-radius:50%; background:var(--nv-blue);
-      box-shadow:0 0 0 4px rgba(59,91,254,.15);
-    }
     #nv-mapa-polska h2{
       font-size:clamp(23px,2.6vw,32px); line-height:1.25; font-weight:800;
       color:var(--nv-ink); margin:0 0 12px;
@@ -224,9 +215,8 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
 
   <div class="nv-wrap">
     <div class="nv-head">
-      <span class="nv-eyebrow">Zasieg ogolnopolski</span>
-      <h2>Terminale platnicze i kasy fiskalne <span>w Twoim wojewodztwie</span></h2>
-      <p>Obslugujemy klientow w calej Polsce. Kliknij wojewodztwo na mapie albo wybierz miasto z listy, aby zobaczyc lokalna oferte terminali platniczych i kas fiskalnych.</p>
+      <h2>Terminale platnicze <span>w Twoim wojewodztwie</span></h2>
+      <p>Obslugujemy klientow w calej Polsce. Sprawdz nasza oferte terminali platniczych.</p>
     </div>
 
     <div class="nv-panel">
@@ -284,7 +274,7 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
 
       <div class="nv-list-side">
         <p class="nv-list-title">Wybierz swoje miasto</p>
-        <p class="nv-list-sub">16 wojewodztw &middot; oferta terminali i kas fiskalnych</p>
+        <p class="nv-list-sub">16 wojewodztw &middot; oferta terminali platniczych</p>
         <div class="nv-chip-grid">
         <a href="strona-a.html" class="nv-chip" data-region="dolnoslaskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Wrocław</strong><small>Dolnośląskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
         <a href="strona-b.html" class="nv-chip" data-region="kujawsko-pomorskie"><span class="nv-chip-dot"></span><span class="nv-chip-text"><strong>Bydgoszcz</strong><small>Kujawsko-Pomorskie</small></span><span class="nv-chip-arrow">&#8594;</span></a>
