@@ -28,14 +28,14 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
 <section class="nv-map-section" id="nv-mapa-polska">
   <style>
     #nv-mapa-polska{
-      --nv-card-1:#eef1fc;
-      --nv-card-2:#e6ebfb;
-      --nv-card-3:#dde4f8;
+      --nv-card-1:#12163f;
+      --nv-card-2:#181e4d;
+      --nv-card-3:#212a63;
       --nv-blue:#3b5bfe;
-      --nv-blue-light:#6c86ff;
+      --nv-blue-light:#8ba0ff;
       --nv-ink:#161a3a;
       --nv-gray:#6b7280;
-      --nv-line:#d7deef;
+      --nv-line:rgba(255,255,255,.12);
       box-sizing:border-box;
       background:#ffffff;
       padding:56px 24px;
@@ -72,19 +72,19 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
       border:1px solid var(--nv-line);
       border-radius:24px;
       overflow:hidden;
-      box-shadow:0 20px 45px -25px rgba(30,42,110,.22);
+      box-shadow:0 25px 55px -25px rgba(10,14,40,.5), 0 0 0 1px rgba(255,255,255,.05) inset;
     }
     #nv-mapa-polska .nv-panel::before{
       content:""; position:absolute; inset:0;
-      background-image:radial-gradient(rgba(59,91,254,.18) 1px, transparent 1px);
+      background-image:radial-gradient(rgba(255,255,255,.16) 1px, transparent 1px);
       background-size:22px 22px;
-      opacity:.6;
+      opacity:.35;
       mask-image:radial-gradient(circle at 30% 30%, rgba(0,0,0,.9), transparent 70%);
       pointer-events:none;
     }
     #nv-mapa-polska .nv-glow{
       position:absolute; width:460px; height:460px; border-radius:50%;
-      background:radial-gradient(circle, rgba(59,91,254,.16), transparent 70%);
+      background:radial-gradient(circle, rgba(59,91,254,.32), transparent 70%);
       top:-140px; right:-160px; pointer-events:none; filter:blur(10px);
     }
 
@@ -95,8 +95,8 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
     #nv-mapa-polska .nv-map-svg{ width:100%; height:auto; max-width:460px; display:block; overflow:visible; }
 
     #nv-mapa-polska .nv-region{
-      fill:rgba(59,91,254,.10);
-      stroke:rgba(22,26,58,.28);
+      fill:rgba(255,255,255,.09);
+      stroke:rgba(255,255,255,.25);
       stroke-width:1.1;
       transition:fill .25s ease, stroke .25s ease, filter .25s ease;
       cursor:pointer;
@@ -106,20 +106,20 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
     #nv-mapa-polska .nv-region-link:focus-visible .nv-region,
     #nv-mapa-polska .nv-region-link.is-active .nv-region{
       fill:var(--nv-blue);
-      stroke:rgba(255,255,255,.7);
-      filter:drop-shadow(0 6px 16px rgba(59,91,254,.4));
+      stroke:rgba(255,255,255,.6);
+      filter:drop-shadow(0 6px 16px rgba(59,91,254,.55));
     }
     #nv-mapa-polska .nv-region-link:focus-visible .nv-region{
-      stroke:#161a3a; stroke-width:1.8;
+      stroke:#ffffff; stroke-width:1.8;
     }
 
     #nv-mapa-polska .nv-dot-link{ cursor:pointer; }
-    #nv-mapa-polska .nv-dot-core{ fill:var(--nv-ink); transition:r .2s ease; }
+    #nv-mapa-polska .nv-dot-core{ fill:#ffffff; transition:r .2s ease; }
     #nv-mapa-polska .nv-dot-ring{
-      fill:none; stroke:#ffffff; stroke-width:1.6; opacity:.95;
+      fill:none; stroke:#ffffff; stroke-width:1.3; opacity:.85;
     }
     #nv-mapa-polska .nv-dot-pulse{
-      fill:var(--nv-blue); opacity:.4;
+      fill:var(--nv-blue-light); opacity:.5;
       transform-origin:center;
       transform-box:fill-box;
       animation:nvPulse 2.6s ease-out infinite;
@@ -159,30 +159,29 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
 
     #nv-mapa-polska .nv-badge{
       position:absolute; left:24px; bottom:20px; z-index:4;
-      background:rgba(255,255,255,.75);
-      border:1px solid rgba(59,91,254,.22);
-      backdrop-filter:blur(6px);
-      border-radius:14px; padding:11px 15px;
+      background:linear-gradient(135deg,var(--nv-blue),#2f4ee0);
+      box-shadow:0 12px 24px -10px rgba(59,91,254,.65);
+      border-radius:14px; padding:11px 16px;
       display:flex; align-items:center; gap:10px;
     }
     #nv-mapa-polska .nv-badge b{
-      font-size:21px; font-weight:800; color:var(--nv-ink); line-height:1;
+      font-size:21px; font-weight:800; color:#ffffff; line-height:1;
     }
     #nv-mapa-polska .nv-badge span{
       display:block; font-size:10.5px; font-weight:700; letter-spacing:.05em;
-      text-transform:uppercase; color:var(--nv-blue); max-width:100px; line-height:1.3;
+      text-transform:uppercase; color:rgba(255,255,255,.85); max-width:100px; line-height:1.3;
     }
 
     #nv-mapa-polska .nv-list-side{
-      position:relative; background:rgba(255,255,255,.35);
+      position:relative; background:rgba(255,255,255,.04);
       border-left:1px solid var(--nv-line);
       padding:28px 24px; display:flex; flex-direction:column;
     }
     #nv-mapa-polska .nv-list-title{
-      color:var(--nv-ink); font-size:14px; font-weight:700; margin:0 0 3px;
+      color:#ffffff; font-size:14px; font-weight:700; margin:0 0 3px;
     }
     #nv-mapa-polska .nv-list-sub{
-      color:var(--nv-gray); font-size:12.5px; margin:0 0 16px;
+      color:rgba(255,255,255,.55); font-size:12.5px; margin:0 0 16px;
     }
     #nv-mapa-polska .nv-chip-grid{
       display:grid; grid-template-columns:1fr 1fr; gap:8px;
@@ -191,13 +190,14 @@ dla kropki-stolicy oraz w "kafelku" na liscie miast):
     #nv-mapa-polska .nv-chip{
       display:flex; align-items:center; gap:9px;
       padding:8px 10px; border-radius:11px;
-      background:#ffffff;
-      border:1px solid var(--nv-line);
-      text-decoration:none; transition:background .2s ease, border-color .2s ease, transform .2s ease;
+      background:rgba(255,255,255,.94);
+      border:1px solid rgba(255,255,255,.94);
+      text-decoration:none; transition:background .2s ease, transform .2s ease, box-shadow .2s ease;
     }
     #nv-mapa-polska .nv-chip:hover,
     #nv-mapa-polska .nv-chip.is-active{
-      background:rgba(59,91,254,.12); border-color:rgba(59,91,254,.4); transform:translateY(-1px);
+      background:#ffffff; transform:translateY(-1px);
+      box-shadow:0 10px 20px -10px rgba(0,0,0,.4);
     }
     #nv-mapa-polska .nv-chip-dot{
       width:7px; height:7px; border-radius:50%; background:var(--nv-blue); flex:none;
