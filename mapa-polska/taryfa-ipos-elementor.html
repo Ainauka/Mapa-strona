@@ -1,0 +1,350 @@
+<!--
+====================================================================
+NETVET.PL — Tabela taryf "iPOS web" (Starter / Standard / Premium / Pro)
+Wklej całość w widget "HTML" Elementora, w kontenerze na stronie.
+
+JAK EDYTOWAĆ:
+1) Wszystkie treści (nazwy, opisy, ceny, cechy, checki/iksy) siedzą
+   w jednym miejscu — w obiektach PLANS i FEATURES w sekcji <script>
+   poniżej. Nie trzeba ruszać HTML-a ręcznie.
+2) Przyciski "WYBIERZ" — uzupełnij docelowe adresy w polu `href`
+   każdego planu w tablicy PLANS (obecnie "#").
+3) Link "lokalizacji" w dopisku pod przyciskiem — uzupełnij `href`
+   w LOCATION_LINK_URL poniżej.
+
+RESPONSYWNOŚĆ:
+- Powyżej 900px: 4 kolumny obok siebie (siatka), tak jak w makiecie.
+- Poniżej 900px (tablety/telefony): karty zamieniają się w poziomą
+  "karuzelę" z przewijaniem i przyciąganiem (scroll-snap), żeby długa
+  lista ~35 cech nie robiła z telefonu nieskończonego scrolla w pionie x4.
+====================================================================
+-->
+<section class="nv-t-section" id="nv-taryfa-ipos">
+  <style>
+    #nv-taryfa-ipos{
+      --nv-green:#2fae60;
+      --nv-green-dark:#279a54;
+      --nv-teal:#2bb3c0;
+      --nv-ink:#1f2430;
+      --nv-gray:#6b7280;
+      --nv-gray-light:#9aa0ab;
+      --nv-line:#e6e6ea;
+      --nv-dark-bg:#1b1c20;
+      box-sizing:border-box;
+      background:#ffffff;
+      font-family:inherit;
+    }
+    #nv-taryfa-ipos *{ box-sizing:border-box; }
+
+    #nv-taryfa-ipos .nv-t-head{
+      background:#f2f2f4;
+      padding:40px 24px;
+      text-align:center;
+    }
+    #nv-taryfa-ipos .nv-t-head h2{
+      margin:0;
+      font-size:clamp(22px,3vw,30px);
+      font-weight:600;
+      color:var(--nv-ink);
+    }
+
+    #nv-taryfa-ipos .nv-t-wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:36px 20px 8px;
+    }
+
+    /* ---------- Desktop grid (>= 900px) ---------- */
+    #nv-taryfa-ipos .nv-t-plans{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border:1px solid var(--nv-line);
+      border-radius:18px;
+      overflow:hidden;
+    }
+
+    #nv-taryfa-ipos .nv-t-card{
+      position:relative;
+      background:#ffffff;
+      padding:30px 26px 34px;
+      display:flex;
+      flex-direction:column;
+      border-right:1px solid var(--nv-line);
+      min-width:0;
+    }
+    #nv-taryfa-ipos .nv-t-card:last-child{ border-right:none; }
+
+    #nv-taryfa-ipos .nv-t-card.is-popular{
+      background:var(--nv-dark-bg);
+      color:#ffffff;
+    }
+
+    #nv-taryfa-ipos .nv-t-ribbon{
+      position:absolute;
+      top:16px; right:-42px;
+      width:160px;
+      transform:rotate(40deg);
+      background:var(--nv-teal);
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-align:center;
+      padding:5px 0;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+    }
+
+    #nv-taryfa-ipos .nv-t-name{
+      font-size:26px;
+      font-weight:600;
+      margin:0 0 12px;
+      color:inherit;
+    }
+    #nv-taryfa-ipos .nv-t-desc{
+      font-size:13.5px;
+      line-height:1.55;
+      color:var(--nv-gray);
+      margin:0 0 22px;
+      min-height:96px;
+    }
+    #nv-taryfa-ipos .is-popular .nv-t-desc{ color:rgba(255,255,255,.68); }
+
+    #nv-taryfa-ipos .nv-t-price-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:14px;
+    }
+    #nv-taryfa-ipos .nv-t-price-num{
+      font-size:30px;
+      font-weight:700;
+      line-height:1.1;
+      color:inherit;
+    }
+    #nv-taryfa-ipos .nv-t-price-unit{
+      font-size:12px;
+      color:var(--nv-gray);
+      margin-top:3px;
+    }
+    #nv-taryfa-ipos .is-popular .nv-t-price-unit{ color:rgba(255,255,255,.6); }
+
+    #nv-taryfa-ipos .nv-t-btn{
+      flex-shrink:0;
+      display:inline-block;
+      background:var(--nv-green);
+      color:#ffffff !important;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+      text-decoration:none;
+      text-align:center;
+      padding:13px 22px;
+      border-radius:8px;
+      white-space:nowrap;
+      transition:background .15s ease, transform .15s ease;
+    }
+    #nv-taryfa-ipos .nv-t-btn:hover{ background:var(--nv-green-dark); transform:translateY(-1px); }
+
+    #nv-taryfa-ipos .nv-t-extra{
+      font-size:12px;
+      line-height:1.5;
+      color:var(--nv-gray);
+      margin:0 0 22px;
+      padding-bottom:22px;
+      border-bottom:1px solid var(--nv-line);
+    }
+    #nv-taryfa-ipos .is-popular .nv-t-extra{
+      color:rgba(255,255,255,.55);
+      border-bottom-color:rgba(255,255,255,.12);
+    }
+    #nv-taryfa-ipos .nv-t-extra a{ color:var(--nv-teal); text-decoration:underline; }
+
+    #nv-taryfa-ipos .nv-t-features{
+      list-style:none;
+      margin:22px 0 0;
+      padding:0;
+    }
+    #nv-taryfa-ipos .nv-t-feat{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:8px 0;
+      font-size:13.5px;
+      line-height:1.45;
+      color:#374151;
+    }
+    #nv-taryfa-ipos .is-popular .nv-t-feat{ color:rgba(255,255,255,.85); }
+    #nv-taryfa-ipos .nv-t-feat.is-off{ color:var(--nv-gray-light); }
+    #nv-taryfa-ipos .is-popular .nv-t-feat.is-off{ color:rgba(255,255,255,.32); }
+
+    #nv-taryfa-ipos .nv-t-ic{
+      flex-shrink:0;
+      width:18px; height:18px;
+      margin-top:2px;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; line-height:1;
+    }
+    #nv-taryfa-ipos .nv-t-ic--yes{ background:rgba(47,174,96,.13); color:var(--nv-green); }
+    #nv-taryfa-ipos .is-popular .nv-t-ic--yes{ background:rgba(47,174,96,.22); }
+    #nv-taryfa-ipos .nv-t-ic--no{ background:#f1f1f3; color:#c7c9d1; }
+    #nv-taryfa-ipos .is-popular .nv-t-ic--no{ background:rgba(255,255,255,.08); color:rgba(255,255,255,.28); }
+
+    #nv-taryfa-ipos .nv-t-feat-note{
+      display:block;
+      font-size:11.5px;
+      color:var(--nv-gray-light);
+      margin-top:2px;
+    }
+    #nv-taryfa-ipos .is-popular .nv-t-feat-note{ color:rgba(255,255,255,.4); }
+
+    /* ---------- Mobile / tablet carousel (< 900px) ---------- */
+    @media (max-width:899.98px){
+      #nv-taryfa-ipos .nv-t-wrap{ padding:28px 0 8px; }
+      #nv-taryfa-ipos .nv-t-plans{
+        display:flex;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        -webkit-overflow-scrolling:touch;
+        border:none;
+        border-radius:0;
+        gap:14px;
+        padding:4px 20px 10px;
+        scrollbar-width:none;
+      }
+      #nv-taryfa-ipos .nv-t-plans::-webkit-scrollbar{ display:none; height:0; }
+      #nv-taryfa-ipos .nv-t-card{
+        flex:0 0 84%;
+        max-width:360px;
+        scroll-snap-align:center;
+        border:1px solid var(--nv-line);
+        border-radius:16px;
+      }
+      #nv-taryfa-ipos .nv-t-card.is-popular{ border-color:var(--nv-dark-bg); }
+      #nv-taryfa-ipos .nv-t-desc{ min-height:0; }
+    }
+
+    @media (max-width:380px){
+      #nv-taryfa-ipos .nv-t-card{ flex-basis:92%; padding:24px 20px 28px; }
+      #nv-taryfa-ipos .nv-t-name{ font-size:23px; }
+      #nv-taryfa-ipos .nv-t-price-num{ font-size:26px; }
+    }
+  </style>
+
+  <div class="nv-t-head">
+    <h2>Taryfa iPOS web</h2>
+  </div>
+
+  <div class="nv-t-wrap">
+    <div class="nv-t-plans" id="nvTPlans"></div>
+  </div>
+
+  <script>
+  (function(){
+    var LOCATION_LINK_URL = '#'; // <-- podmień na realny adres strony "lokalizacja"
+
+    var PLANS = [
+      {
+        key:'starter', name:'Starter', price:'19', extra:'19', popular:false, href:'#',
+        desc:'Najprostsza taryfa na start — dla najmniejszych firm, które chcą szybko uruchomić sprzedaż i przyjmować płatności kartą, ale bez dodatkowych funkcji jak np. obsługa KSeF.'
+      },
+      {
+        key:'standard', name:'Standard', price:'69', extra:'69', popular:false, href:'#',
+        desc:'Taryfa dla mniejszych firm, które obsługują płatność kartą i nie potrzebują gospodarki magazynowej. Sprawdzi się na start w małych punktach sprzedaży i gastronomii.'
+      },
+      {
+        key:'premium', name:'Premium', price:'119', extra:'69', popular:true, href:'#',
+        desc:'Taryfa dla firm, które chcą być na bieżąco ze sprzedażą, prowadzić magazyn w podstawowym zakresie i obsługują kilku klientów jednocześnie. Dedykowana dla małych biznesów.'
+      },
+      {
+        key:'pro', name:'Pro', price:'169', extra:'69', popular:false, href:'#',
+        desc:'Taryfa dla firm, które chcą być na bieżąco ze swoim biznesem i prowadzą zaawansowaną gospodarkę magazynem. Rekomendowana dla większych biznesów oraz gastronomii.'
+      }
+    ];
+
+    // text/note mogą być: string (wspólny dla wszystkich planów) albo obiekt {starter:'...', standard:'...', premium:'...', pro:'...'}
+    var FEATURES = [
+      { text:'możliwość wyłączenia płatnej taryfy', note:'nie płacisz, jeśli nie korzystasz z systemu', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'obsługa płatności kartami', note:'0,59% + 10 gr Visa i Mastercard, 0,39% + 10 gr Blik', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'sklep internetowy deliko.pl', note:'opłata 2% od przyjętych zamówień', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:{starter:'do 25 sztuk towarów', standard:'do 4 tys. szt. towarów', premium:'do 10 tys. szt. towarów', pro:'do 20 tys. szt. towarów'}, included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:{starter:'podstawowy zestaw raportów iPOS web', standard:'pełne raporty sprzedaży iPOS web', premium:'pełne raporty sprzedaży iPOS web', pro:'pełne raporty sprzedaży iPOS web'}, included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:{starter:'raporty w iPOS web kolejnego dnia', standard:'raporty w iPOS web kolejnego dnia', premium:'raporty w iPOS web na bieżąco', pro:'raporty w iPOS web na bieżąco'}, included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'zarządzanie produktami w iPOS web', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'własne logo na wydruku', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'definiowanie własnych form płatności', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'zarządzanie gotówką', included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:{starter:'domyślne role i uprawnienia personelu', standard:'domyślne role i uprawnienia personelu', premium:'własne nazwy ról i definiowanie uprawnień personelu', pro:'własne nazwy ról i definiowanie uprawnień personelu'}, included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:{starter:'1 kasjer', standard:'nieograniczona liczba kasjerów', premium:'nieograniczona liczba kasjerów', pro:'nieograniczona liczba kasjerów'}, included:{starter:1,standard:1,premium:1,pro:1} },
+      { text:'zarządzanie zmianami kasjerów', included:{starter:0,standard:1,premium:1,pro:1} },
+      { text:'wystawianie FV z kasoterminala', included:{starter:0,standard:1,premium:1,pro:1} },
+      { text:'obsługa KSeF', note:'od 1.04.2026r.', included:{starter:0,standard:1,premium:1,pro:1} },
+      { text:'obsługa wielu cenników', included:{starter:0,standard:1,premium:1,pro:1} },
+      { text:'obsługa kategorii', included:{starter:0,standard:1,premium:1,pro:1} },
+      { text:'kafelkowe menu kategorii', included:{starter:0,standard:1,premium:1,pro:1} },
+      { text:'obsługa kaucji', note:'sprzedaż opakowań bez kaucji, sprzedaż/skup opakowań zwrotnych powiązanych z produktem, kaucja bez opakowania', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'planowanie zakupów', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:{starter:'ilościowa gospodarka magazynowa', standard:'ilościowa gospodarka magazynowa', premium:'ilościowa gospodarka magazynowa', pro:'ilościowo-wartościowa gospodarka magazynowa'}, included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'parkowanie i dzielenie paragonów', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'generowanie wydruków kuchennych', note:{starter:'na kasoterminalu lub na drukarce bonowej współpracującej z iPOS vero', standard:'na kasoterminalu lub na drukarce bonowej współpracującej z iPOS vero', premium:'na 1 kasoterminalu lub na 1 drukarce bonowej współpracującej z iPOS vero', pro:'na wielu kasoterminalach lub drukarkach bonowych współpracujących z iPOS vero'}, included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'obsługa systemu przywoławczego', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'numeracja zamówień', note:'numer zamówienia drukowany na paragonie', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'zamknięcie rachunku na potrzeby własne', note:'zakończone wydrukiem niefiskalnym', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'zestawy ze sztywną ceną', note:'np. zestawy lunchowe', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'dodawanie uwag do produktu na wydruku kuchennym', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'indywidualne opisy rachunków', included:{starter:0,standard:0,premium:1,pro:1} },
+      { text:'warianty zestawów ze zmienną ceną', note:'np. zestawy lunchowe z opcjami do wyboru', included:{starter:0,standard:0,premium:0,pro:1} },
+      { text:'receptury', included:{starter:0,standard:0,premium:0,pro:1} },
+      { text:'faktura gastronomiczna', included:{starter:0,standard:0,premium:0,pro:1} },
+      { text:'możliwość nazywania rachunków „z ręki”', note:'na iPOS vero', included:{starter:0,standard:0,premium:0,pro:1} },
+      { text:'współdzielenie rachunku pomiędzy kasoterminalami', included:{starter:0,standard:0,premium:0,pro:1} },
+      { text:'obsługa dostaw', note:'przekazanie rachunku na mobilny kasoterminal dostawcy', included:{starter:0,standard:0,premium:0,pro:1} }
+    ];
+
+    function pick(val, key){
+      if (val && typeof val === 'object') return val[key] || '';
+      return val || '';
+    }
+    function esc(str){
+      var d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function renderCard(plan){
+      var featsHtml = FEATURES.map(function(f){
+        var on = !!f.included[plan.key];
+        var text = pick(f.text, plan.key);
+        var note = pick(f.note, plan.key);
+        return (
+          '<li class="nv-t-feat' + (on ? '' : ' is-off') + '">' +
+            '<span class="nv-t-ic ' + (on ? 'nv-t-ic--yes">&#10003;' : 'nv-t-ic--no">&#10005;') + '</span>' +
+            '<span>' + esc(text) + (note ? '<span class="nv-t-feat-note">(' + esc(note) + ')</span>' : '') + '</span>' +
+          '</li>'
+        );
+      }).join('');
+
+      return (
+        '<div class="nv-t-card' + (plan.popular ? ' is-popular' : '') + '">' +
+          (plan.popular ? '<span class="nv-t-ribbon">POPULARNE</span>' : '') +
+          '<h3 class="nv-t-name">' + esc(plan.name) + '</h3>' +
+          '<p class="nv-t-desc">' + esc(plan.desc) + '</p>' +
+          '<div class="nv-t-price-row">' +
+            '<div>' +
+              '<div class="nv-t-price-num">' + esc(plan.price) + ' zł</div>' +
+              '<div class="nv-t-price-unit">miesięcznie</div>' +
+            '</div>' +
+            '<a class="nv-t-btn" href="' + esc(plan.href) + '">Wybierz</a>' +
+          '</div>' +
+          '<p class="nv-t-extra">+ ' + esc(plan.extra) + ' zł miesięcznie za kolejny kasoterminal w tej samej <a href="' + esc(LOCATION_LINK_URL) + '">lokalizacji</a></p>' +
+          '<ul class="nv-t-features">' + featsHtml + '</ul>' +
+        '</div>'
+      );
+    }
+
+    document.getElementById('nvTPlans').innerHTML = PLANS.map(renderCard).join('');
+  })();
+  </script>
+</section>
