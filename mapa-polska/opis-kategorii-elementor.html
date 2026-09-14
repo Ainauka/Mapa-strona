@@ -1,0 +1,156 @@
+<!--
+====================================================================
+NETVET.PL — Opis kategorii (blok tekstowy)
+Wklej w widget "HTML" Elementora, wewnątrz kontenera z domyślnym
+jasnoszarym tłem — blok jest przezroczysty i "unosi się" nad tym tłem
+jako biała karta z cieniem.
+
+DO EDYCJI (3 miejsca):
+  1. Etykieta nad tytułem   -> "KASY FISKALNE"
+  2. Tytuł H2               -> "Kasy fiskalne dopasowane do Twojej branży"
+  3. Akapit opisu           -> tekst poniżej
+  4. Trzy punkty (ikona + tekst) w .nv-cat-features
+  5. Przycisk CTA           -> etykieta + href="#"
+====================================================================
+-->
+<section class="nv-cat-opis" id="nv-cat-opis">
+  <style>
+    #nv-cat-opis{
+      --nv-blue:#3b5bfe;
+      --nv-navy:#1d2560;
+      --nv-navy-hover:#333f8f;
+      --nv-ink:#161a3a;
+      --nv-gray:#6b7280;
+      --nv-line:#e3e6f3;
+      --nv-accent-bg:#eef0fd;
+      box-sizing:border-box;
+      background:transparent;
+      padding:8px;
+      font-family:inherit;
+    }
+    #nv-cat-opis *{ box-sizing:border-box; }
+
+    #nv-cat-opis .nv-card{
+      position:relative;
+      max-width:1100px;
+      margin:0 auto;
+      background:#ffffff;
+      border-radius:22px;
+      border:1px solid var(--nv-line);
+      box-shadow:0 24px 50px -30px rgba(30,42,110,.28);
+      padding:40px 44px;
+      overflow:hidden;
+    }
+    #nv-cat-opis .nv-card::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0; width:6px;
+      background:linear-gradient(180deg,var(--nv-blue),var(--nv-navy));
+    }
+
+    #nv-cat-opis .nv-eyebrow{
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--nv-accent-bg); color:var(--nv-navy);
+      font-size:12px; font-weight:800; letter-spacing:.06em;
+      text-transform:uppercase; padding:6px 14px; border-radius:999px;
+      margin:0 0 16px;
+    }
+    #nv-cat-opis .nv-eyebrow::before{
+      content:""; width:6px; height:6px; border-radius:50%;
+      background:var(--nv-blue); flex:none;
+    }
+
+    #nv-cat-opis h2{
+      font-size:clamp(24px,3vw,34px); line-height:1.25; font-weight:800;
+      color:var(--nv-ink); margin:0 0 14px;
+    }
+
+    #nv-cat-opis .nv-desc{
+      font-size:16px; line-height:1.7; color:var(--nv-gray);
+      max-width:760px; margin:0 0 28px;
+    }
+
+    #nv-cat-opis .nv-cat-features{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+      margin:0 0 30px;
+    }
+    #nv-cat-opis .nv-feature{
+      display:flex; align-items:flex-start; gap:12px;
+      background:#fbfbfe; border:1px solid var(--nv-line);
+      border-radius:14px; padding:16px;
+    }
+    #nv-cat-opis .nv-feature-icon{
+      flex:none; width:36px; height:36px; border-radius:10px;
+      background:var(--nv-navy); display:flex; align-items:center; justify-content:center;
+    }
+    #nv-cat-opis .nv-feature-icon svg{ width:18px; height:18px; stroke:#ffffff; }
+    #nv-cat-opis .nv-feature-text strong{
+      display:block; font-size:14px; font-weight:700; color:var(--nv-ink); margin-bottom:2px;
+    }
+    #nv-cat-opis .nv-feature-text span{
+      display:block; font-size:12.5px; color:var(--nv-gray); line-height:1.45;
+    }
+
+    #nv-cat-opis .nv-cta{
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--nv-navy); color:#ffffff !important;
+      font-size:14.5px; font-weight:700; text-decoration:none;
+      padding:13px 24px; border-radius:12px;
+      box-shadow:0 12px 24px -10px rgba(29,37,96,.5);
+      transition:background .2s ease, transform .2s ease;
+    }
+    #nv-cat-opis .nv-cta:hover{ background:var(--nv-navy-hover); transform:translateY(-1px); }
+    #nv-cat-opis .nv-cta svg{ width:15px; height:15px; stroke:#ffffff; transition:transform .2s ease; }
+    #nv-cat-opis .nv-cta:hover svg{ transform:translateX(3px); }
+
+    @media (max-width:820px){
+      #nv-cat-opis .nv-cat-features{ grid-template-columns:1fr; }
+      #nv-cat-opis .nv-card{ padding:28px 22px; }
+    }
+  </style>
+
+  <div class="nv-card">
+    <span class="nv-eyebrow">Kasy fiskalne</span>
+    <h2>Kasy fiskalne dopasowane do Twojej branży</h2>
+    <p class="nv-desc">
+      Oferujemy kasy i drukarki fiskalne dla gastronomii, handlu i usług — od prostych
+      modeli przenośnych po zaawansowane systemy POS. Pomagamy dobrać właściwe
+      urządzenie, przeprowadzamy fiskalizację i zapewniamy autoryzowany serwis
+      gwarancyjny i pogwarancyjny na terenie całej Polski.
+    </p>
+
+    <div class="nv-cat-features">
+      <div class="nv-feature">
+        <span class="nv-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <span class="nv-feature-text">
+          <strong>Autoryzowany serwis</strong>
+          <span>Naprawy i przeglądy zgodne z wymogami producentów</span>
+        </span>
+      </div>
+      <div class="nv-feature">
+        <span class="nv-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </span>
+        <span class="nv-feature-text">
+          <strong>Fiskalizacja w 24h</strong>
+          <span>Szybkie uruchomienie urządzenia na miejscu lub zdalnie</span>
+        </span>
+      </div>
+      <div class="nv-feature">
+        <span class="nv-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="nv-feature-text">
+          <strong>Wsparcie 7 dni w tygodniu</strong>
+          <span>Pomoc telefoniczna i zdalna dla stałych klientów</span>
+        </span>
+      </div>
+    </div>
+
+    <a class="nv-cta" href="#">
+      Zobacz pełną ofertę
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
