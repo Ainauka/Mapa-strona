@@ -116,6 +116,8 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
     #nv-mapa-polska .nv-radar{ pointer-events:none; }
     #nv-mapa-polska .nv-radar-ring{
       fill:none; stroke:var(--nv-blue-light); stroke-width:1.8; opacity:0;
+      vector-effect:non-scaling-stroke;
+      transform-origin:center; transform-box:fill-box;
       animation:nvRadar 3.9s ease-out infinite;
     }
 
@@ -125,12 +127,12 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
       100%{ transform:scale(2.4); opacity:0; }
     }
     @keyframes nvRadar{
-      0%{ r:10; opacity:.65; }
-      100%{ r:520; opacity:0; }
+      0%{ transform:scale(.4); opacity:.65; }
+      100%{ transform:scale(37); opacity:0; }
     }
     @media (prefers-reduced-motion:reduce){
       #nv-mapa-polska .nv-dot-pulse{ animation:none; opacity:.25; }
-      #nv-mapa-polska .nv-radar-ring{ animation:none; opacity:0; }
+      #nv-mapa-polska .nv-radar-ring{ animation:none; opacity:.18; transform:scale(20); }
     }
 
     #nv-mapa-polska .nv-tooltip{
@@ -259,9 +261,9 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
       <path class="nv-region" d="M171.0,36.8 L173.9,44.6 L178.3,48.9 L178.6,55.4 L176.0,56.9 L176.5,61.7 L179.6,65.2 L170.3,72.2 L175.8,81.9 L174.5,84.1 L176.5,87.8 L174.6,91.2 L186.7,103.9 L180.0,107.0 L179.9,110.2 L184.5,113.8 L179.1,119.0 L181.3,128.0 L172.8,131.4 L171.1,140.9 L166.0,145.3 L153.8,146.2 L155.4,154.4 L169.9,162.4 L164.9,166.5 L165.6,171.4 L160.7,169.7 L157.7,175.4 L151.3,176.0 L150.1,180.3 L147.3,181.3 L148.5,184.8 L145.5,189.7 L131.0,192.6 L123.7,189.8 L125.2,183.5 L117.0,181.6 L117.3,184.1 L112.3,187.7 L113.9,190.0 L109.1,194.4 L98.5,192.3 L86.9,198.9 L81.9,198.1 L84.4,204.3 L68.9,210.7 L58.7,205.9 L57.0,208.3 L59.1,210.2 L55.2,211.4 L55.6,215.3 L52.0,217.6 L48.7,229.1 L41.6,228.0 L39.5,233.3 L16.2,212.7 L10.0,210.1 L12.4,205.1 L11.3,197.8 L24.2,187.8 L26.3,179.8 L25.7,173.9 L30.0,167.6 L21.2,138.3 L22.0,132.0 L19.1,126.9 L21.0,119.3 L27.8,125.8 L33.6,126.9 L39.4,134.2 L39.9,127.9 L36.1,125.8 L37.0,118.3 L40.6,116.5 L39.9,111.4 L42.9,103.8 L47.5,99.5 L49.5,100.7 L49.7,94.5 L52.2,90.6 L50.2,90.4 L82.5,78.9 L130.9,66.8 L139.1,61.9 L158.5,39.8 L171.0,36.8 Z"/>
           </g>
           <g class="nv-radar" aria-hidden="true">
-            <circle class="nv-radar-ring" cx="190.3" cy="383.6" r="10"/>
-            <circle class="nv-radar-ring" cx="190.3" cy="383.6" r="10" style="animation-delay:1.3s"/>
-            <circle class="nv-radar-ring" cx="190.3" cy="383.6" r="10" style="animation-delay:2.6s"/>
+            <circle class="nv-radar-ring" cx="190.3" cy="383.6" r="14"/>
+            <circle class="nv-radar-ring" cx="190.3" cy="383.6" r="14" style="animation-delay:1.3s"/>
+            <circle class="nv-radar-ring" cx="190.3" cy="383.6" r="14" style="animation-delay:2.6s"/>
           </g>
           <g class="nv-dots">
       <a href="https://netvet.pl/terminal-platniczy-wroclaw/" class="nv-dot-link" aria-hidden="true" tabindex="-1" data-region="dolnoslaskie"><g class="nv-dot" data-region="dolnoslaskie"><circle class="nv-dot-pulse" cx="190.3" cy="383.6" r="10"/><circle class="nv-dot-ring" cx="190.3" cy="383.6" r="6.5"/><circle class="nv-dot-core" cx="190.3" cy="383.6" r="3.2"/></g></a>
