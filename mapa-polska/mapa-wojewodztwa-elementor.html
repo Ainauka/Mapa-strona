@@ -29,6 +29,7 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
   <style>
     #nv-mapa-polska{
       --nv-blue:#3b5bfe;
+      --nv-blue-light:#8ab4ff;
       --nv-navy:#1d2560;
       --nv-navy-hover:#333f8f;
       --nv-ink:#161a3a;
@@ -114,7 +115,7 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
 
     #nv-mapa-polska .nv-radar{ pointer-events:none; }
     #nv-mapa-polska .nv-radar-ring{
-      fill:none; stroke:#ffffff; stroke-width:1.4; opacity:0;
+      fill:none; stroke:var(--nv-blue-light); stroke-width:1.8; opacity:0;
       animation:nvRadar 3.9s ease-out infinite;
     }
 
@@ -124,7 +125,7 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
       100%{ transform:scale(2.4); opacity:0; }
     }
     @keyframes nvRadar{
-      0%{ r:10; opacity:.55; }
+      0%{ r:10; opacity:.65; }
       100%{ r:520; opacity:0; }
     }
     @media (prefers-reduced-motion:reduce){
@@ -231,7 +232,7 @@ obszaru województwa oraz <a class="nv-cta"> w prawej kolumnie
   <div class="nv-wrap">
     <div class="nv-head">
       <h2>Terminale płatnicze</h2>
-      <p>Obsługujemy klientów. Sprawdź naszą ofertę terminali płatniczych.</p>
+      <p>Obsługujemy klientów w całej Polsce. Sprawdź naszą ofertę terminali płatniczych.</p>
     </div>
 
     <div class="nv-panel">
